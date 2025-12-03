@@ -4,6 +4,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections.Generic;
 
 public class UIManager : MonoBehaviour
 {
@@ -11,11 +12,14 @@ public class UIManager : MonoBehaviour
     [SerializeField] private DeepSeekAPI deepSeekAPI;
     [SerializeField] private TMP_InputField inputField;
     [SerializeField] private TMP_Text dialogueText;
-    private string characterName;
+    [SerializeField] private GameObject loadingIndicator;
 
     [Header("Setting")]
     [SerializeField] private float typingSpeed = 0.005f; // 打字机效果的字符显示速度
-    [SerializeField] private GameObject loadingIndicator;
+    [SerializeField] private int maxVisibleMessages = 12; // = maxMessages in DeepSeekAPI
+
+    private readonly List<string> messageHistory = new List<string>();
+    private string characterName;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -31,21 +35,83 @@ public class UIManager : MonoBehaviour
                 Debug.Log("Empty input.");
                 return;
             }
+
+            AddMessageToHistory("You: " + text);
+
             inputField.text = "";
-            dialogueText.text = "";
             loadingIndicator.SetActive(true);
-            deepSeekAPI.SendMessageToDeepSeek(text, HandleAIResposne);
+            dialogueText.enabled = false;
+            
+            deepSeekAPI.SendMessageToDeepSeek(text, HandleAIResponse);
         });
     }
 
-    private void HandleAIResposne(string content, bool isSuccess)
+    private void HandleAIResponse(string content, bool isSuccess)
     {
         StopAllCoroutines();
         inputField.interactable = false;
-        string message = content;
-        StartCoroutine(TypewriterEffect(isSuccess ? characterName + ":" + message : characterName + ": (communication interrupted...)"));;
+        
+        string line = isSuccess
+        ? $"{characterName}: {content}"
+        : $"{characterName}: (communication interrupted...)";
+
+        StartCoroutine(TypewriterAppend(line));
+
+        // string message = content;
+        // StartCoroutine(TypewriterEffect(isSuccess ? characterName + ":" + message : characterName + ": (communication interrupted...)"));;
     }
 
+    // 只对“新的一句”做打字机，前面的历史保持不动
+    private IEnumerator TypewriterAppend(string newLine)
+    {
+        loadingIndicator.SetActive(false);
+        dialogueText.enabled = true;
+        inputField.DeactivateInputField();
+
+        // 先把这条消息记录进 history，但暂时不直接刷新到 UI
+        messageHistory.Add(newLine);
+        while (messageHistory.Count > maxVisibleMessages)
+            messageHistory.RemoveAt(0);
+
+        // prefix = 除了最后这一条以外的所有历史
+        int lastIndex = messageHistory.Count - 1;
+        string prefix = lastIndex > 0
+            ? string.Join("\n\n", messageHistory.GetRange(0, lastIndex)) + "\n\n"
+            : "";
+
+        StringBuilder sb = new StringBuilder();
+
+        // 逐字把 newLine 打出来
+        foreach (char c in newLine)
+        {
+            sb.Append(c);
+            dialogueText.text = prefix + sb.ToString();
+            yield return new WaitForSeconds(typingSpeed);
+        }
+
+        // 确保最后文本是完整 history（前面 + 完整 newLine）
+        dialogueText.text = string.Join("\n\n", messageHistory);
+
+        inputField.interactable = true;
+        inputField.ActivateInputField();
+        inputField.caretPosition = inputField.text.Length;
+    }
+
+    private void AddMessageToHistory(string line)
+    {
+        messageHistory.Add(line);
+
+        // 超过数量就从最老的开始删
+        while (messageHistory.Count > maxVisibleMessages)
+        {
+            messageHistory.RemoveAt(0);
+        }
+
+        // 把所有消息拼成一段大文本，中间空一行
+        dialogueText.text = string.Join("\n\n", messageHistory);
+    }
+
+    /*
     // 打字机效果
     private IEnumerator TypewriterEffect(string text)
     {
@@ -64,4 +130,5 @@ public class UIManager : MonoBehaviour
         inputField.ActivateInputField();
         inputField.caretPosition = inputField.text.Length;
     }
+    */
 }
