@@ -1,0 +1,28 @@
+# Unity generated folders (never push)
+[Ll]ibrary/
+[Tt]emp/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+UserSettings/
+MemoryCaptures/
+
+# Crash and logs
+sysinfo.txt
+
+# Visual Studio / Rider / VSCode files
+.vs/
+.idea/
+*.csproj
+*.sln
+*.user
+*.userprefs
+*.pidb
+*.pdb
+*.mdb
+
+# OS files
+.DS_Store
+
+# Cache
+obj/
