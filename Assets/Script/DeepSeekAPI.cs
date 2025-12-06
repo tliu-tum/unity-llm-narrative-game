@@ -15,6 +15,7 @@ public class DeepSeekAPI : MonoBehaviour
     [Header("Dialogue Settings")] // 参数
     [Range(0, 2)] public float temperature = 0.5f; // 越高越随机
     [Range(1, 1000)] public int maxTokens = 200;
+    public int maxRounds = 20; // AI response rounds
 
     [System.Serializable] // serializable class (serialize to json)
     public class Character
@@ -166,9 +167,6 @@ public class DeepSeekAPI : MonoBehaviour
     // ===== 新增：裁剪规则（永远保留 system）=====
     private void TrimConversationHistory()
     {
-        // 想保留的“轮数”
-    int maxRounds = 6;
-
         // 每轮 = user + assistant = 2 条
         int maxMessages = maxRounds * 2;
 

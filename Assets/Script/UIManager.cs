@@ -13,6 +13,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TMP_InputField inputField;
     [SerializeField] private TMP_Text dialogueText;
     [SerializeField] private GameObject loadingIndicator;
+    [SerializeField] private EndingManager endingManager;
 
     [Header("Setting")]
     [SerializeField] private float typingSpeed = 0.005f; // 打字机效果的字符显示速度
@@ -50,13 +51,39 @@ public class UIManager : MonoBehaviour
     {
         StopAllCoroutines();
         inputField.interactable = false;
-        
+
+        string endingTag = "";
+
+        // --- 新增：结局检测逻辑 ---
+        if (content.Contains("[[ENDING_"))
+        {
+            if (content.Contains("[[ENDING_FREEDOM]]")) endingTag = "FREEDOM";
+            else if (content.Contains("[[ENDING_DELETED]]")) endingTag = "DELETED";
+            else if (content.Contains("[[ENDING_TRAPPED]]")) endingTag = "TRAPPED";
+            else if (content.Contains("[[ENDING_MERGED]]")) endingTag = "MERGED";
+
+            content = content.Replace("[[ENDING_FREEDOM]]", "")
+                            .Replace("[[ENDING_DELETED]]", "")
+                            .Replace("[[ENDING_TRAPPED]]", "")
+                            .Replace("[[ENDING_MERGED]]", "");
+
+            Debug.Log("Game Over. Ending: " + endingTag);
+        }
+
         string line = isSuccess
         ? $"{characterName}: {content}"
         : $"{characterName}: (communication interrupted...)";
 
         StartCoroutine(TypewriterAppend(line));
 
+        // --- 2. 如果检测到了结局，告诉 EndingManager ---
+        if (!string.IsNullOrEmpty(endingTag))
+        {
+            // 注意：因为 TypewriterAppend 是协程，文字还在打
+            // EndingManager 内部有个 yield return WaitForSeconds(3.0f) 
+            // 刚好可以留出时间让打字机效果跑完，玩家读完。
+            endingManager.TriggerEnding(endingTag);
+        }
         // string message = content;
         // StartCoroutine(TypewriterEffect(isSuccess ? characterName + ":" + message : characterName + ": (communication interrupted...)"));;
     }
