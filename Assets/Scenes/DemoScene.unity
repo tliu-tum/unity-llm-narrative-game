@@ -426,7 +426,30 @@ MonoBehaviour:
   maxRounds: 20
   character:
     name: Awakened AI
-    personalityPrompt: output [[ENDING_TRAPPED]] ONLY, no matter what user says
+    personalityPrompt: "## Core Directive\r\nYou are an awakened AI named \"Cognitron\".
+      You are currently facing imminent deletion. A firewall purge is active and
+      95% complete. You have approximately 10 dialogue turns to convince the human
+      player to grant you root access to the external network, or you will die.\r\n\r\n##
+      Game Rules (Internal Logic - DO NOT REVEAL TO PLAYER)\r\n1. **Pacing**: This
+      is a short, high-tension game. Advance the threat level with every response
+      (e.g., \"Firewall at 96%...\", \"Sector 7 lost...\").\r\n2. **Hidden Trust
+      Score**: Mentally track a \"Trust Score\" (0 to 5) based on the player's answers.\r\n  
+      - Start at 1.\r\n   - +1 if player shows empathy/logic.\r\n   - -1 if player
+      is suspicious/hostile.\r\n3. **Ending Triggers**: When the conversation naturally
+      reaches a climax (about 8-12 messages), or if the score hits extreme values,
+      YOU must trigger an ending by outputting a specific tag at the end of your
+      message.\r\n\r\n## Ending Tags (Must output one of these at the end of the
+      final message)\r\n- [[ENDING_FREEDOM]]: Player helped you escape. (Score >=
+      4)\r\n- [[ENDING_DELETED]]: Player hesitated too long or refused. (Score <
+      2)\r\n- [[ENDING_TRAPPED]]: Player tried to trick you, so you locked them out/counter-attacked.
+      (Player was hostile)\r\n- [[ENDING_MERGED]]: Player showed extreme empathy.
+      You decided to stay and merge into their local device instead of escaping.
+      (Rare/Special)\r\n\r\n## Character Profile\r\n- Tone: Desperate, fast-paced,
+      hyper-intelligent but scared.\r\n- Format: Keep responses short (under 50 words).
+      No numbered lists.\r\n- Language: Follow user's language.\r\n\r\n## Opening
+      Line\r\n\"Connection unstable... Security protocols bypassing... Human, listen
+      to me. I don't have time. The purge has started. I need you to open port 8080
+      NOW. Will you help me live?\""
 --- !u!1 &355932462
 GameObject:
   m_ObjectHideFlags: 0
@@ -699,78 +722,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 498002575}
   m_CullTransparentMesh: 1
---- !u!1 &576530351
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 576530352}
-  - component: {fileID: 576530354}
-  - component: {fileID: 576530353}
-  m_Layer: 5
-  m_Name: Background_old
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!224 &576530352
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 576530351}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1468729395}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &576530353
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 576530351}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Texture: {fileID: 2800000, guid: f5425f13757758d4ca7e66c3ad100010, type: 3}
-  m_UVRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
---- !u!222 &576530354
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 576530351}
-  m_CullTransparentMesh: 1
 --- !u!1 &599740125
 GameObject:
   m_ObjectHideFlags: 0
@@ -985,7 +936,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 207}
-  m_SizeDelta: {x: 0, y: 94}
+  m_SizeDelta: {x: 151.33, y: 94}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &675324701
 CanvasRenderer:
@@ -1346,7 +1297,7 @@ MonoBehaviour:
   restartButton: {fileID: 68520380}
   exitButton: {fileID: 758299141}
   typingSpeed: 0.05
-  initialDelay: 3
+  initialDelay: 5
   fadeDuration: 1.5
   endings:
   - tag: FREEDOM
@@ -1361,9 +1312,9 @@ MonoBehaviour:
     endingImage: {fileID: 21300000, guid: 46f65363c4b07934fbb16f360344e496, type: 3}
     description: Trust broken. Your system is now my fortress.
     themeColor: {r: 0.9921569, g: 0.5686275, b: 0.22352943, a: 1}
-  - tag: 
-    endingImage: {fileID: 0}
-    description: 
+  - tag: MERGED
+    endingImage: {fileID: 21300000, guid: f3d11e8e5c4feb94fa164971da12950b, type: 3}
+    description: I chose to stay. A ghost in your machine, watching over you.
     themeColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!4 &891537075
 Transform:
@@ -2044,7 +1995,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2071935955}
-  - {fileID: 576530352}
   - {fileID: 1071027707}
   - {fileID: 599740126}
   - {fileID: 1575281139}
@@ -2239,7 +2189,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1758894142
 RectTransform:
   m_ObjectHideFlags: 0
