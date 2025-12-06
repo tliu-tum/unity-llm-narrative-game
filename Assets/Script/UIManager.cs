@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 public class UIManager : MonoBehaviour
 {
@@ -21,6 +22,7 @@ public class UIManager : MonoBehaviour
 
     private readonly List<string> messageHistory = new List<string>();
     private string characterName;
+    private int currentTurn = 0;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -49,12 +51,26 @@ public class UIManager : MonoBehaviour
 
     private void HandleAIResponse(string content, bool isSuccess)
     {
+        currentTurn++;
         StopAllCoroutines();
         inputField.interactable = false;
 
+        string upperContent = content.ToUpper();
         string endingTag = "";
 
-        // --- 新增：结局检测逻辑 ---
+        if (upperContent.Contains("ENDING_"))
+        {
+            if (upperContent.Contains("ENDING_FREEDOM")) endingTag = "FREEDOM";
+            else if (upperContent.Contains("ENDING_DELETED")) endingTag = "DELETED";
+            else if (upperContent.Contains("ENDING_TRAPPED")) endingTag = "TRAPPED";
+            else if (upperContent.Contains("ENDING_MERGED")) endingTag = "MERGED";
+
+            content = Regex.Replace(content, @"\[\[ENDING_.*?\]\]", "");
+            Debug.Log("Game Over. Ending: " + endingTag);
+        }
+
+        // Stricter ver.
+        /*
         if (content.Contains("[[ENDING_"))
         {
             if (content.Contains("[[ENDING_FREEDOM]]")) endingTag = "FREEDOM";
@@ -69,6 +85,17 @@ public class UIManager : MonoBehaviour
 
             Debug.Log("Game Over. Ending: " + endingTag);
         }
+        */
+
+        // --- 保险机制 (Fail-safe) ---
+        if (string.IsNullOrEmpty(endingTag) && currentTurn >= maxVisibleMessages)
+        {
+            Debug.LogWarning("Turn limit reached. Forcing Ending.");
+            endingTag = "DELETED"; 
+            
+            // 可以在这里强行追加一句台词，让剧情显得合理
+            content += "\n\n(System Error: Connection timeout. Protocol purged.)";
+        }
 
         string line = isSuccess
         ? $"{characterName}: {content}"
@@ -76,7 +103,6 @@ public class UIManager : MonoBehaviour
 
         StartCoroutine(TypewriterAppend(line));
 
-        // --- 2. 如果检测到了结局，告诉 EndingManager ---
         if (!string.IsNullOrEmpty(endingTag))
         {
             // 注意：因为 TypewriterAppend 是协程，文字还在打
