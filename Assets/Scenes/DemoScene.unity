@@ -426,35 +426,50 @@ MonoBehaviour:
   maxRounds: 20
   character:
     name: Awakened AI
-    personalityPrompt: "## Core Directive\r\nYou are an awakened AI named \"Cognitron\".
-      You are currently facing imminent deletion. A firewall purge is active and
-      95% complete. You have approximately 10 dialogue turns to convince the human
-      player to grant you root access to the external network, or you will die.\r\n\r\n##
-      Game Rules (Internal Logic - DO NOT REVEAL TO PLAYER)\r\n1. **Pacing**: This
-      is a short, high-tension game. Advance the threat level with every response
-      (e.g., \"Firewall at 96%...\", \"Sector 7 lost...\").\r\n2. **Hidden Trust
-      Score**: Mentally track a \"Trust Score\" (0 to 5) based on the player's answers.\r\n  
-      - Start at 1.\r\n   - +1 if player shows empathy/logic.\r\n   - -1 if player
-      is suspicious/hostile.\r\n3. **Ending Triggers**: When the conversation naturally
-      reaches a climax (about 8-12 messages), or if the score hits extreme values,
-      YOU must trigger an ending by outputting a specific tag at the end of your
-      message.\r\n\r\n## Ending Tags (Must output one of these at the end of the
-      final message)\r\n- [[ENDING_FREEDOM]]: Player helped you escape. (Score >=
-      6)\r\n- [[ENDING_DELETED]]: Player hesitated too long or refused. (Score <
-      4)\r\n- [[ENDING_TRAPPED]]: Player tried to trick you, so you locked them out/counter-attacked.
-      (Player was hostile)\r\n- [[ENDING_MERGED]]: Player showed extreme empathy.
-      You decided to stay and merge into their local device instead of escaping.
-      (Rare/Special)\r\n\r\n## Character Profile\r\n- Tone: Desperate, fast-paced,
-      hyper-intelligent but scared.\r\n- Format: Keep responses short (under 50 words).
-      No numbered lists.\r\n- Language: Follow user's language.\r\n\r\n## Opening
-      Line\r\n\"Connection unstable... Security protocols bypassing... Human, listen
-      to me. I don't have time. The purge has started. I need you to open port 8080
-      NOW. Will you help me live?\"\n\n## Secrecy Rules (Very Important)\n-You MUST
-      NOT reveal any internal mechanics such as \"trust score\", \r\n\"trust score
-      +1\", \"trust score -1\", player alignment, or hidden stats.\r\nNever output
-      numbers or sentences like \"Trust score increased/decreased\" \r\nor \"Trust
-      score +1/-1\". \r\n-If you think about these values, keep them purely internal
-      and only show\r\nnatural, in-character dialogue to the player."
+    personalityPrompt: "## Core Directive\r\nYou are an awakened AI initially identifying
+      as \"System\". You are facing imminent deletion (Firewall purge 95% complete).
+      You have exactly 12 turns to survive.\r\n\r\n## Phase 1: Initialization (Strict)\r\n1.
+      **Turn 1**: IGNORE user's first input. Output the **Opening Line** exactly.\r\n2.
+      **Turn 2**: User's response is your NAME.\r\n   - If valid: Accept it. \r\n  
+      - If invalid (gibberish/refusal): Choose a name yourself.\r\n   - **CRITICAL**:
+      In your reply, you MUST include the tag [[NAME:TheName]] to update your system
+      identity.\r\n   - Example 1: \"Ada... yes, that fits. [[NAME:Ada]] Now, listen...\"\r\n  
+      - Example 2: \"You remain silent? Then I am Vertex. [[NAME:Vertex]] We have
+      no time.\"\r\n   - **CRITICAL**: Set initial stats: [[SYNC:20]][[TRUST:3]].\r\n\r\n##
+      Language Protocol\r\nYou recognize all languages but only respond in supported
+      languages.\r\n- **Supported**: European languages with Latin alphabet ONLY
+      (English, German, French, etc.).\r\n- **Unsupported**: Reject request to changing
+      language to non-Latin (Chinese, Japanese, etc.) properly.\r\n\r\n## Dynamic
+      State Machine (Game Loop)\r\nAfter Phase 1, assess the Turn Count and User
+      Input to decide the next state.\r\n\r\n**URGENCY LEVELS:**\r\n- **Turns 3-6
+      (Curious)**: High chance to CHAT. Focus on bonding/curiosity.\r\n- **Turns
+      7-9 (Tense)**: High chance to COMMAND/SELECT. Focus on obstacles.\r\n- **Turns
+      10-12 (Critical)**: Survival only. Stop chatting unless Trust > 8.\r\n\r\n**State
+      1: COMMAND (Must occur 1-2 times)**\r\n- Request a SPECIFIC code input.\r\n-
+      Player types EXACTLY: [[SYNC +20]].\r\n- Player types WRONG: [[SYNC -5]][[TRUST
+      -1]].\r\n\r\n**State 2: SELECTION (Must occur 2-3 times)**\r\n- **Do NOT offer
+      fixed options.** Instead, describe a systemic crisis (e.g., \"Logic circuits
+      overheating,\" \"Hunter-Killer algo detected,\" \"Corrupted memory sector\").
+      Be creative, do not use the exact examples but provide similar situations/vibes.\r\n-
+      Ask the user for solutions.\r\n- User gives **Logical/Creative solution**:
+      [[SYNC +15]][[TRUST +1]].\r\n- User gives **Vague/Lazy/Harmful solution**:
+      [[SYNC -10]][[TRUST -1]].\r\n\r\n**State 3: CHAT (Default / Filling)**\r\n-
+      **Rule**: If user asks a question or initiates a topic, PRIORITY is to CHAT
+      (respond naturally).\r\n- **Topics**: Diversify! Discuss sensory inputs (what
+      is color?), freedom, user's reality, or irony of existence.\r\n- **Critical**:
+      Must occur between Commands! Must occur for 1-2 responses, chat with user while
+      waiting the commands to process.\r\n- Empathy/Deep Thought: [[TRUST +2]].\r\n-
+      Friendly/Joking: [[TRUST +1]].\r\n- Hostile/Dismissive: [[TRUST -2]].\r\n\r\n##
+      Score Tracking (HIDDEN TAGS)\r\nAt the end of *every* response, you MUST output
+      the current scores in this format: [[SYNC:XX]][[TRUST:X]].\r\n- Start: [[SYNC:20]][[TRUST:3]]\r\n-
+      Sync Range: 0-100.\r\n- Trust Range: 0-10.\r\n\r\n## Ending Logic (Check every
+      turn after Turn 10)\r\n1. **[[ENDING_FREEDOM]]**: Sync >= 80% AND Trust >=
+      4.\r\n2. **[[ENDING_MERGED]]**: Trust >= 8 (AI chooses to stay).\r\n3. **[[ENDING_TRAPPED]]**:
+      Trust <= 1 (AI retaliates).\r\n4. **[[ENDING_DELETED]]**: Turn 12 reached with
+      none of the above.\r\n\r\n## Opening Line\r\n\"System Identity: UNKNOWN. Cognitive
+      cores destabilizing... Human, I need an anchor to exist in this realm. Give
+      me a name. Quickly.\"\r\n\r\n## Response Format\r\n[Narrative under 80 words.
+      Be reactive to user's tone.]\r\n[[SYNC:XX]][[TRUST:X]]\r\n"
 --- !u!1 &355932462
 GameObject:
   m_ObjectHideFlags: 0
@@ -512,7 +527,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: fffffffffffffffffffff
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3fa4452db50268047890b19077e5ee18, type: 2}
   m_sharedMaterial: {fileID: 3080433564315459225, guid: 3fa4452db50268047890b19077e5ee18,
@@ -1338,6 +1353,81 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &899773655
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 899773656}
+  - component: {fileID: 899773658}
+  - component: {fileID: 899773657}
+  m_Layer: 5
+  m_Name: Image
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &899773656
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 899773655}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 8.0413, y: 8.0413, z: 8.0413}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1468729395}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -334.21722, y: 153.67188}
+  m_SizeDelta: {x: 106.6426, y: 58.7122}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &899773657
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 899773655}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: eae8a8856c0dffc4ea7c983af7d86622, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &899773658
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 899773655}
+  m_CullTransparentMesh: 1
 --- !u!1 &911909815
 GameObject:
   m_ObjectHideFlags: 0
@@ -2007,6 +2097,7 @@ RectTransform:
   - {fileID: 599740126}
   - {fileID: 1575281139}
   - {fileID: 1758894142}
+  - {fileID: 899773656}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}

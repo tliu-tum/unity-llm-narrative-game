@@ -58,9 +58,64 @@ public class UIManager : MonoBehaviour
         StopAllCoroutines();
         inputField.interactable = false;
 
+        // --- 修改后 (Robust / Loose) ---
+        // 解释:
+        // \[+          -> 匹配 1个或多个 '['
+        // NAME         -> 匹配单词 NAME (后面加了 IgnoreCase 忽略大小写)
+        // \s*:\s* -> 匹配冒号，且允许冒号前后有任意个空格
+        // (.*?)        -> 捕获组：非贪婪匹配名字内容
+        // \]+          -> 匹配 1个或多个 ']'
+        Match nameMatch = Regex.Match(content, @"\[+NAME\s*:\s*(.*?)\]+", RegexOptions.IgnoreCase);
+
+        if (nameMatch.Success)
+        {
+            // 1. 提取名字 & 去除首尾多余空格 (Trim)
+            string newName = nameMatch.Groups[1].Value.Trim();
+            
+            // 额外保险：防止名字里意外夹带了右括号（虽然正则已经处理了大部分）
+            newName = newName.Replace("]", "");
+
+            // 2. 更新名字
+            characterName = newName;
+            Debug.Log($"Character renamed to: {characterName}");
+
+            // 3. 从原文中移除整个标签 (nameMatch.Value 是指 [[NAME: ... ]] 这一整串)
+            content = content.Replace(nameMatch.Value, "");
+        }
+
+        /* Strict ver.
+        // 匹配 [[NAME:任意内容]]
+        Match nameMatch = Regex.Match(content, @"\[\[NAME:(.*?)\]\]");
+        if (nameMatch.Success)
+        {
+            // 1. 提取名字 (Group[1] 是括号里的内容)
+            string newName = nameMatch.Groups[1].Value;
+            
+            // 2. 更新当前的角色名
+            characterName = newName;
+            
+            Debug.Log($"Character renamed to: {characterName}");
+
+            // 3. 从显示的文本中移除这个标签，保持沉浸感
+            content = content.Replace(nameMatch.Value, "");
+        }
+        */
+
+        // 3. 【新增】隐形移除分数标签 (Robust Version)
+        // 原理：
+        // \[+       -> 匹配 1个或多个 '['
+        // \s* -> 允许前面有空格
+        // SYNC      -> 关键词 (配合 IgnoreCase 忽略大小写)
+        // .*?       -> 中间可以夹杂冒号、等号或空格 (非贪婪匹配)
+        // \d+       -> **必须包含数字** (防止误删普通对话里的单词 "Sync")
+        // .*?       -> 允许数字后面有 % 或空格
+        // \]+       -> 匹配 1个或多个 ']'
+        
+        content = Regex.Replace(content, @"\[+\s*SYNC.*?\d+.*?\]+", "", RegexOptions.IgnoreCase);
+        content = Regex.Replace(content, @"\[+\s*TRUST.*?\d+.*?\]+", "", RegexOptions.IgnoreCase);
+        
         string upperContent = content.ToUpper();
         string endingTag = "";
-
         if (upperContent.Contains("ENDING_"))
         {
             if (upperContent.Contains("ENDING_FREEDOM")) endingTag = "FREEDOM";
@@ -115,8 +170,6 @@ public class UIManager : MonoBehaviour
             // 刚好可以留出时间让打字机效果跑完，玩家读完。
             endingManager.TriggerEnding(endingTag);
         }
-        // string message = content;
-        // StartCoroutine(TypewriterEffect(isSuccess ? characterName + ":" + message : characterName + ": (communication interrupted...)"));;
     }
 
     // 只对“新的一句”做打字机，前面的历史保持不动
