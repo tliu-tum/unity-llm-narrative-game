@@ -462,7 +462,7 @@ GameObject:
   - component: {fileID: 355932465}
   - component: {fileID: 355932464}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: 'Answers(TMP) '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -509,15 +509,16 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3fa4452db50268047890b19077e5ee18, type: 2}
+  m_sharedMaterial: {fileID: 3080433564315459225, guid: 3fa4452db50268047890b19077e5ee18,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
     rgba: 4287074139
-  m_fontColor: {r: 0.35732365, g: 0.5597484, b: 0.5279955, a: 1}
+  m_fontColor: {r: 0, g: 1, b: 0.78431374, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -598,7 +599,7 @@ GameObject:
   - component: {fileID: 498002578}
   - component: {fileID: 498002577}
   m_Layer: 5
-  m_Name: Text
+  m_Name: PlayerWords(TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -645,15 +646,16 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u200B"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3fa4452db50268047890b19077e5ee18, type: 2}
+  m_sharedMaterial: {fileID: 3080433564315459225, guid: 3fa4452db50268047890b19077e5ee18,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4287725908
-  m_fontColor: {r: 0.32941177, g: 0.5058824, b: 0.5686275, a: 1}
+    rgba: 4289065465
+  m_fontColor: {r: 0.97647065, g: 0.9450981, b: 0.64705884, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1419,7 +1421,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 3.5, y: -10}
+  m_AnchoredPosition: {x: 3.5, y: -9.999634}
   m_SizeDelta: {x: -613, y: -680}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1071027708
