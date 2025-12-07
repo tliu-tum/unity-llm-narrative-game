@@ -20,6 +20,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private float typingSpeed = 0.005f; // 打字机效果的字符显示速度
     [SerializeField] private int maxVisibleMessages = 12; // = maxMessages in DeepSeekAPI
 
+    [Header("Terminal Style Settings")]
+    [SerializeField] private int maxCharsPerLine = 50;
+
     private readonly List<string> messageHistory = new List<string>();
     private string characterName;
     private int currentTurn = 0;
@@ -39,7 +42,7 @@ public class UIManager : MonoBehaviour
                 return;
             }
 
-            AddMessageToHistory("You: " + text);
+            AddMessageToHistory(">_ You: " + text);
 
             inputField.text = "";
             loadingIndicator.SetActive(true);
@@ -97,9 +100,11 @@ public class UIManager : MonoBehaviour
             content += "\n\n(System Error: Connection timeout. Protocol purged.)";
         }
 
+        string formattedContent = FormatToTerminalStyle(content);
+
         string line = isSuccess
-        ? $"{characterName}: {content}"
-        : $"{characterName}: (communication interrupted...)";
+        ? $">_ {characterName}: {formattedContent}"
+        : $">_ {characterName}: (communication interrupted...)";
 
         StartCoroutine(TypewriterAppend(line));
 
@@ -164,24 +169,74 @@ public class UIManager : MonoBehaviour
         dialogueText.text = string.Join("\n\n", messageHistory);
     }
 
-    /*
-    // 打字机效果
-    private IEnumerator TypewriterEffect(string text)
+    private string FormatToTerminalStyle(string originalText)
     {
-        loadingIndicator.SetActive(false);
-        inputField.DeactivateInputField();
+        StringBuilder finalBuilder = new StringBuilder();
+        
+        // 1. 先按“AI输出的原有换行”切分段落
+        // (比如AI自己分段了，我们要保留这个分段结构)
+        string[] paragraphs = originalText.Split('\n');
 
-        StringBuilder sb = new StringBuilder();
-        foreach (char c in text)
+        for (int i = 0; i < paragraphs.Length; i++)
         {
-            sb.Append(c);
-            dialogueText.text = sb.ToString();
-            yield return new WaitForSeconds(typingSpeed); // 等待一段时间
+            string paragraph = paragraphs[i];
+            
+            // 如果是空行（AI输出了连续换行），我们可以选择跳过或者加个空行
+            if (string.IsNullOrWhiteSpace(paragraph)) continue;
+
+            // 2. 将段落拆分成单词 (用空格拆分)
+            string[] words = paragraph.Split(' ');
+            
+            StringBuilder currentLine = new StringBuilder();
+
+            foreach (string word in words)
+            {
+                // 如果是空单词（比如连续空格），跳过
+                if (string.IsNullOrEmpty(word)) continue;
+
+                // 3. 预测：如果加上这个单词，长度会不会爆？
+                // 现有长度 + 空格(1) + 新单词长度
+                int potentialLength = currentLine.Length + word.Length + (currentLine.Length > 0 ? 1 : 0);
+
+                if (potentialLength > maxCharsPerLine)
+                {
+                    // --- 爆了：把当前行存入 finalBuilder，并换行 ---
+                    
+                    // 如果 finalBuilder 已经有内容了，说明这是第2、3...行，需要加前缀
+                    // (如果是整个回复的第一行，HandleAIResponse 外面已经加了前缀，所以这里不加)
+                    if (finalBuilder.Length > 0)
+                    {
+                        finalBuilder.Append("\n>_ "); 
+                    }
+                    
+                    finalBuilder.Append(currentLine.ToString());
+
+                    // 重置当前行，并将这个“导致溢出”的单词作为新一行的开头
+                    currentLine.Clear();
+                    currentLine.Append(word);
+                }
+                else
+                {
+                    // --- 没爆：追加到当前行 ---
+                    if (currentLine.Length > 0)
+                    {
+                        currentLine.Append(" "); // 单词之间加空格
+                    }
+                    currentLine.Append(word);
+                }
+            }
+
+            // 4. 处理段落剩下的最后一行
+            if (currentLine.Length > 0)
+            {
+                if (finalBuilder.Length > 0)
+                {
+                    finalBuilder.Append("\n>_ ");
+                }
+                finalBuilder.Append(currentLine.ToString());
+            }
         }
 
-        inputField.interactable = true;
-        inputField.ActivateInputField();
-        inputField.caretPosition = inputField.text.Length;
+        return finalBuilder.ToString();
     }
-    */
 }

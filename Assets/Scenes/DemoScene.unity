@@ -523,7 +523,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4287074139
-  m_fontColor: {r: 0, g: 1, b: 0.78431374, a: 1}
+  m_fontColor: {r: 0.45098042, g: 0.6313726, b: 0.6039216, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1374,6 +1374,7 @@ MonoBehaviour:
   endingManager: {fileID: 891537074}
   typingSpeed: 0.025
   maxVisibleMessages: 12
+  maxCharsPerLine: 50
 --- !u!4 &911909817
 Transform:
   m_ObjectHideFlags: 0
@@ -1863,7 +1864,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1263614136}
   m_HandleRect: {fileID: 1263614135}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
