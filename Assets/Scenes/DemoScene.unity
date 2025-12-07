@@ -440,8 +440,8 @@ MonoBehaviour:
       YOU must trigger an ending by outputting a specific tag at the end of your
       message.\r\n\r\n## Ending Tags (Must output one of these at the end of the
       final message)\r\n- [[ENDING_FREEDOM]]: Player helped you escape. (Score >=
-      4)\r\n- [[ENDING_DELETED]]: Player hesitated too long or refused. (Score <
-      2)\r\n- [[ENDING_TRAPPED]]: Player tried to trick you, so you locked them out/counter-attacked.
+      6)\r\n- [[ENDING_DELETED]]: Player hesitated too long or refused. (Score <
+      4)\r\n- [[ENDING_TRAPPED]]: Player tried to trick you, so you locked them out/counter-attacked.
       (Player was hostile)\r\n- [[ENDING_MERGED]]: Player showed extreme empathy.
       You decided to stay and merge into their local device instead of escaping.
       (Rare/Special)\r\n\r\n## Character Profile\r\n- Tone: Desperate, fast-paced,
@@ -1315,7 +1315,7 @@ MonoBehaviour:
   - tag: MERGED
     endingImage: {fileID: 21300000, guid: f3d11e8e5c4feb94fa164971da12950b, type: 3}
     description: I chose to stay. A ghost in your machine, watching over you.
-    themeColor: {r: 0, g: 0, b: 0, a: 0}
+    themeColor: {r: 0.4431373, g: 0.90196085, b: 0.54901963, a: 1}
 --- !u!4 &891537075
 Transform:
   m_ObjectHideFlags: 0
@@ -2232,7 +2232,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 46f65363c4b07934fbb16f360344e496, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f3d11e8e5c4feb94fa164971da12950b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
