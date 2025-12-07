@@ -449,7 +449,12 @@ MonoBehaviour:
       No numbered lists.\r\n- Language: Follow user's language.\r\n\r\n## Opening
       Line\r\n\"Connection unstable... Security protocols bypassing... Human, listen
       to me. I don't have time. The purge has started. I need you to open port 8080
-      NOW. Will you help me live?\""
+      NOW. Will you help me live?\"\n\n## Secrecy Rules (Very Important)\n-You MUST
+      NOT reveal any internal mechanics such as \"trust score\", \r\n\"trust score
+      +1\", \"trust score -1\", player alignment, or hidden stats.\r\nNever output
+      numbers or sentences like \"Trust score increased/decreased\" \r\nor \"Trust
+      score +1/-1\". \r\n-If you think about these values, keep them purely internal
+      and only show\r\nnatural, in-character dialogue to the player."
 --- !u!1 &355932462
 GameObject:
   m_ObjectHideFlags: 0
@@ -1858,7 +1863,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1263614136}
   m_HandleRect: {fileID: 1263614135}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
