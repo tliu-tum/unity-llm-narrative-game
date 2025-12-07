@@ -512,7 +512,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 
+  m_text: fffffffffffffffffffff
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3fa4452db50268047890b19077e5ee18, type: 2}
   m_sharedMaterial: {fileID: 3080433564315459225, guid: 3fa4452db50268047890b19077e5ee18,
@@ -522,8 +522,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4287074139
-  m_fontColor: {r: 0.45098042, g: 0.6313726, b: 0.6039216, a: 1}
+    rgba: 4291152536
+  m_fontColor: {r: 0.5955856, g: 0.7924528, b: 0.7727661, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -540,8 +540,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
-  m_fontSizeBase: 32
+  m_fontSize: 31
+  m_fontSizeBase: 31
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -677,8 +677,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
-  m_fontSizeBase: 32
+  m_fontSize: 31
+  m_fontSizeBase: 31
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1374,7 +1374,7 @@ MonoBehaviour:
   endingManager: {fileID: 891537074}
   typingSpeed: 0.025
   maxVisibleMessages: 12
-  maxCharsPerLine: 50
+  maxCharsPerLine: 65
 --- !u!4 &911909817
 Transform:
   m_ObjectHideFlags: 0

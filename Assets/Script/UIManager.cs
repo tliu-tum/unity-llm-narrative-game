@@ -42,7 +42,7 @@ public class UIManager : MonoBehaviour
                 return;
             }
 
-            AddMessageToHistory(">_ You: " + text);
+            AddMessageToHistory(">_ <color=#F9F1A5>You:</color> \n>_ " + text);
 
             inputField.text = "";
             loadingIndicator.SetActive(true);
@@ -103,8 +103,8 @@ public class UIManager : MonoBehaviour
         string formattedContent = FormatToTerminalStyle(content);
 
         string line = isSuccess
-        ? $">_ {characterName}: {formattedContent}"
-        : $">_ {characterName}: (communication interrupted...)";
+        ? $">_ <color=#85E0A6>{characterName}:</color> \n>_ {formattedContent}"
+        : $">_ <color=#85E0A6>{characterName}:</color> \n>_ (communication interrupted...)";
 
         StartCoroutine(TypewriterAppend(line));
 
