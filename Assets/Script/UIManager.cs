@@ -23,9 +23,16 @@ public class UIManager : MonoBehaviour
     [Header("Terminal Style Settings")]
     [SerializeField] private int maxCharsPerLine = 50;
 
+    [Header("Popup")]
+    [SerializeField] private InputManager inputManager;
+    [SerializeField] private string playerColorHex = "#F9F1A5";
+
     private readonly List<string> messageHistory = new List<string>();
     private string characterName;
     private int currentTurn = 0;
+
+    //被弹窗锁定的时候不要响应输入
+    private bool lockedByPopup = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -114,6 +121,24 @@ public class UIManager : MonoBehaviour
         content = Regex.Replace(content, @"\[+\s*SYNC.*?\d+.*?\]+", "", RegexOptions.IgnoreCase);
         content = Regex.Replace(content, @"\[+\s*TRUST.*?\d+.*?\]+", "", RegexOptions.IgnoreCase);
         
+        //检测[[CODE:...]]标签，触发弹窗
+        var codeMatch = Regex.Match(content, @"\[+CODE\s*:\s*(.*?)\]+", RegexOptions.IgnoreCase);
+        if (codeMatch.Success)
+        {
+            content = Regex.Replace(content, @"\[+CODE\s*:\s*(.*?)\]+", "");
+
+            Debug.Log("CODE tag detected. Triggering code input popup.");
+            if(inputManager != null)
+            {
+                inputManager.ShowInput();
+            }
+            else
+            {
+                Debug.LogWarning("CODE tag detexted but CodeInputPopup reference is missing.");
+            }
+        }
+
+        // --- 处理结局标签 ---
         string upperContent = content.ToUpper();
         string endingTag = "";
         if (upperContent.Contains("ENDING_"))
@@ -203,9 +228,14 @@ public class UIManager : MonoBehaviour
         // 确保最后文本是完整 history（前面 + 完整 newLine）
         dialogueText.text = string.Join("\n\n", messageHistory);
 
-        inputField.interactable = true;
-        inputField.ActivateInputField();
-        inputField.caretPosition = inputField.text.Length;
+        //确定弹窗关闭的时候才响应输入
+        if (!lockedByPopup)
+        {
+            inputField.interactable = true;
+            inputField.ActivateInputField();
+            inputField.caretPosition = inputField.text.Length;
+        }
+        
     }
 
     private void AddMessageToHistory(string line)
@@ -291,5 +321,42 @@ public class UIManager : MonoBehaviour
         }
 
         return finalBuilder.ToString();
+    }
+
+
+    //供弹窗调用，锁定输入
+
+    public void SetInputEnable(bool enables)
+    {
+        lockedByPopup = !enables;
+        inputField.interactable = enables;
+
+        if (enables)
+        {
+            inputField.ActivateInputField();
+            inputField.caretPosition = inputField.text.Length;
+        }
+        else
+        {
+            inputField.DeactivateInputField();
+        }
+            
+        
+    }
+    //回车之后调用的方法
+    public void OnCodeSubmitted(string text)
+    {
+       if(string.IsNullOrEmpty(text))
+       {
+            Debug.Log("Empty code input.");
+            text = "(empty)";
+       }
+
+       AddMessageToHistory(">_ <color=" + playerColorHex + ">You (code input):</color> \n>_ " + text);
+
+       loadingIndicator.SetActive(true);
+       dialogueText.enabled = false;
+
+       deepSeekAPI.SendMessageToDeepSeek(text, HandleAIResponse);
     }
 }
