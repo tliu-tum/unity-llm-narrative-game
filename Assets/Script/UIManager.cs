@@ -26,6 +26,7 @@ public class UIManager : MonoBehaviour
     [Header("Popup")]
     [SerializeField] private InputManager inputManager;
     [SerializeField] private string playerColorHex = "#F9F1A5";
+    [SerializeField] private float codePopupDelay = 1.5f;
 
     private readonly List<string> messageHistory = new List<string>();
     private string characterName;
@@ -130,7 +131,9 @@ public class UIManager : MonoBehaviour
             Debug.Log("CODE tag detected. Triggering code input popup.");
             if(inputManager != null)
             {
-                inputManager.ShowInput();
+                //延时弹窗，确保AI回复先显示出来
+                StartCoroutine(ShowPopupDelayed());
+                //inputManager.ShowInput();
             }
             else
             {
@@ -236,6 +239,15 @@ public class UIManager : MonoBehaviour
             inputField.caretPosition = inputField.text.Length;
         }
         
+    }
+
+    private IEnumerator ShowPopupDelayed()
+    {
+        yield return new WaitForSeconds(codePopupDelay);
+        if(inputManager != null)
+        {
+            inputManager.ShowInput();
+        }
     }
 
     private void AddMessageToHistory(string line)

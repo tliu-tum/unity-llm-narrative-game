@@ -1534,6 +1534,7 @@ MonoBehaviour:
   maxCharsPerLine: 65
   inputManager: {fileID: 1948432519}
   playerColorHex: '#F9F1A5'
+  codePopupDelay: 6
 --- !u!4 &911909817
 Transform:
   m_ObjectHideFlags: 0
