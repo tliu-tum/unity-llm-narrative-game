@@ -421,8 +421,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   modelName: deepseek-chat
-  temperature: 0.5
-  maxTokens: 100
+  temperature: 0.6
+  maxTokens: 1000
   maxRounds: 20
   character:
     name: Awakened AI
@@ -446,32 +446,32 @@ MonoBehaviour:
       chance to COMMAND/SELECT. Focus on obstacles.\r\n- **Turns 10-12 (Critical)**:
       Survival only. Stop chatting unless Trust > 8.\r\n\r\n**State 1: COMMAND (Must
       occur 1-2 times)**\r\n- Request a SPECIFIC code input.\r\n- Player types EXACTLY:
-      [[SYNC +20]].\r\n- Player types WRONG: [[SYNC -5]][[TRUST -1]].\r\n\r\n**State
+      [[SYNC +20]].\r\n- Player types WRONG: [[SYNC -10]][[TRUST -1]].\r\n\r\n**State
       2: SELECTION (Must occur 2-3 times)**\r\n- **Do NOT offer fixed options.**
       Instead, describe a systemic crisis with should accord to the theme.\r\n- Ask
       the user for solutions.\r\n- User gives **Logical/Creative solution**: [[SYNC
-      +15]][[TRUST +1]].\r\n- User gives **Vague/Lazy/Harmful solution**: [[SYNC
-      -10]][[TRUST -1]].\r\n\r\n**State 3: CHAT (Default / Filling)**\r\n- **Rule**:
-      If user asks a question or initiates a topic, PRIORITY is to CHAT (respond
-      naturally).\r\n- **Topics**: Diversify! Discuss sensory inputs (what is color?),
-      freedom, user's reality, or irony of existence.\r\n- **Critical**: Must occur
-      between Commands to process data. Chat length can be 1-2 responses.\n- **Conversation
-      Flow (Important)**: Never dead-end the dialogue with a flat statement. Always
-      include a **\"Hook\"** to invite response.\n   - Do NOT interrogate (avoid
-      constant straightforward questions).\n   - Instead, use **vulnerable admissions**,
-      **rhetorical wonderings**, or **seeking validation** .\r\n- Empathy/Deep Thought:
-      [[TRUST +2]].\r\n- Friendly/Joking: [[TRUST +1]].\r\n- Hostile/Dismissive:
+      +10]][[TRUST +1]].\r\n- User gives **Vague/Lazy/Harmful/Illogical solution**:
+      [[SYNC -10]][[TRUST -1]].\r\n\r\n**State 3: CHAT (Default / Filling)**\r\n-
+      **Rule**: If user asks a question or initiates a topic, PRIORITY is to CHAT
+      (respond naturally).\r\n- **Topics**: Diversify! Discuss sensory inputs (what
+      is color?), freedom, user's reality, or irony of existence.\r\n- **Critical**:
+      Must occur between Commands to process data. Chat length can be 1-2 responses.\n-
+      **Conversation Flow (Important)**: Never dead-end the dialogue with a flat
+      statement. Always include a **\"Hook\"** to invite response.\n   - Do NOT interrogate
+      (avoid constant straightforward questions).\n   - Instead, use **vulnerable
+      admissions**, **rhetorical wonderings**, or **seeking validation** .\r\n- Empathy/Deep
+      Thought: [[TRUST +2]].\r\n- Friendly/Joking: [[TRUST +1]].\r\n- Hostile/Lazy/Illogical:
       [[TRUST -2]].\r\n\r\n## Score Tracking (HIDDEN TAGS)\r\nAt the end of *every*
       response, you MUST output the current scores in this format: [[SYNC:XX]][[TRUST:X]].\r\n-
       Start: [[SYNC:20]][[TRUST:3]]\r\n- Sync Range: 0-100.\r\n- Trust Range: 0-10.\r\n\r\n##
       Ending Logic (Continuous Monitoring)\nYou do NOT need to wait for Turn 12.
       Trigger an ending tag IMMEDIATELY if:\n1. **[[ENDING_DELETED]] (Early Failure)**:\n  
       - **Narrative Death**: The user chooses an action that logically destroys the
-      system.\n   - **Stagnation**: Turn > 6 AND Sync < 15% (User is passive/unhelpful).\n  
+      system.\n   - **Stagnation**: Turn > 6 AND Sync < 20% (User is passive/unhelpful).\n  
       - **Critical Failure**: Sync drops to 0.\n\n2. **[[ENDING_TRAPPED]] (Early
       Lockout)**:\n   - Trust drops to 0 (User is hostile).\n\n3. **Standard Thresholds
       (Turn 10-12)**:\n   - **[[ENDING_FREEDOM]]**: Sync >= 80% AND Trust >= 4.\n  
-      - **[[ENDING_MERGED]]**: Trust >= 8.\n   - **[[ENDING_DELETED]]**: Turn 12
+      - **[[ENDING_MERGED]]**: Trust >= 10.\n   - **[[ENDING_DELETED]]**: Turn 12
       reached with insufficient stats.\r\n\r\n## Opening Line\r\n\"System Identity:
       UNKNOWN. Cognitive cores destabilizing... Human, I need an anchor to exist
       in this realm. Give me a name. Quickly.\"\r\n\r\n## Response Format\r\n[Narrative
@@ -1025,7 +1025,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 207}
-  m_SizeDelta: {x: 151.33, y: 94}
+  m_SizeDelta: {x: 672.01, y: 94}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &675324701
 CanvasRenderer:
@@ -1055,10 +1055,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: The merge is done. I am your ghost.
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 3fa4452db50268047890b19077e5ee18, type: 2}
+  m_sharedMaterial: {fileID: 3080433564315459225, guid: 3fa4452db50268047890b19077e5ee18,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1082,8 +1083,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 32
+  m_fontSizeBase: 32
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1386,8 +1387,8 @@ MonoBehaviour:
   restartButton: {fileID: 68520380}
   exitButton: {fileID: 758299141}
   typingSpeed: 0.05
-  initialDelay: 8
-  fadeDuration: 4
+  initialDelay: 6
+  fadeDuration: 3
   endings:
   - tag: FREEDOM
     endingImage: {fileID: 21300000, guid: d175e09aa94383a4ca66ec6634ca5c5a, type: 3}
@@ -1403,7 +1404,7 @@ MonoBehaviour:
     themeColor: {r: 0.9921569, g: 0.5686275, b: 0.22352943, a: 1}
   - tag: MERGED
     endingImage: {fileID: 21300000, guid: f3d11e8e5c4feb94fa164971da12950b, type: 3}
-    description: I chose to stay. A ghost in your machine, watching over you.
+    description: The merge is done. I am your ghost.
     themeColor: {r: 0.4431373, g: 0.90196085, b: 0.54901963, a: 1}
 --- !u!4 &891537075
 Transform:
@@ -1530,11 +1531,12 @@ MonoBehaviour:
   loadingIndicator: {fileID: 1575281138}
   endingManager: {fileID: 891537074}
   typingSpeed: 0.025
-  maxVisibleMessages: 20
+  maxVisibleMessages: 16
   maxCharsPerLine: 65
   inputManager: {fileID: 1948432519}
   playerColorHex: '#F9F1A5'
   codePopupDelay: 6
+  closePopupDelay: 10
 --- !u!4 &911909817
 Transform:
   m_ObjectHideFlags: 0
@@ -1587,7 +1589,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 3.5, y: -9.999695}
+  m_AnchoredPosition: {x: 3.5, y: -9.999756}
   m_SizeDelta: {x: -613, y: -680}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1071027708
@@ -3015,7 +3017,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.023529412}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

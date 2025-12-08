@@ -27,6 +27,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private InputManager inputManager;
     [SerializeField] private string playerColorHex = "#F9F1A5";
     [SerializeField] private float codePopupDelay = 1.5f;
+    [SerializeField] private float closePopupDelay = 10f;
 
     private readonly List<string> messageHistory = new List<string>();
     private string characterName;
@@ -119,9 +120,10 @@ public class UIManager : MonoBehaviour
         // .*?       -> 允许数字后面有 % 或空格
         // \]+       -> 匹配 1个或多个 ']'
         
-        content = Regex.Replace(content, @"\[+\s*SYNC.*?\d+.*?\]+", "", RegexOptions.IgnoreCase);
-        content = Regex.Replace(content, @"\[+\s*TRUST.*?\d+.*?\]+", "", RegexOptions.IgnoreCase);
+        // content = Regex.Replace(content, @"\[+\s*SYNC.*?\d+.*?\]+", "", RegexOptions.IgnoreCase);
+        // content = Regex.Replace(content, @"\[+\s*TRUST.*?\d+.*?\]+", "", RegexOptions.IgnoreCase);
         
+        /*
         //检测[[CODE:...]]标签，触发弹窗
         var codeMatch = Regex.Match(content, @"\[+CODE\s*:\s*(.*?)\]+", RegexOptions.IgnoreCase);
         if (codeMatch.Success)
@@ -140,6 +142,41 @@ public class UIManager : MonoBehaviour
                 Debug.LogWarning("CODE tag detexted but CodeInputPopup reference is missing.");
             }
         }
+        */
+
+        // 终极提取正则：
+        // \[+CODE      -> 找 [[CODE
+        // \s*[:=\s]\s* -> 容错分隔符：允许冒号(:)、等号(=) 或者 纯空格( )
+        // (.*?)        -> 提取内容
+        // (?=\]|\[|$)  -> 【零宽断言】预测结尾：要么是 ]，要么是下一个 [，要么是字符串结束
+        var codeMatch = Regex.Match(content, @"\[+CODE\s*[:=\s]\s*(.*?)(?=\]|\[|$)", RegexOptions.IgnoreCase);
+        
+        if (codeMatch.Success)
+        {
+            // 拿到内容后，去掉可能残留的右括号 (Trim)
+            string codeContent = codeMatch.Groups[1].Value.Replace("]", "").Trim();
+            Debug.Log($"CODE detected: {codeContent}");
+
+            if(inputManager != null)
+            {
+                StartCoroutine(ShowPopupDelayed());
+            }
+        }
+
+        // =================================================================================
+        // 2. 隐形移除所有标签 (SYNC, TRUST, CODE, NAME) - 统一清洗
+        // =================================================================================
+        
+        // 清洗正则解释：
+        // \[+\s* -> 匹配 [[ 和可能的空格
+        // (SYNC|TRUST|CODE|NAME) -> 匹配所有关键字
+        // [^\[\]]* -> 匹配中间内容，但遇到 [ 或 ] 就停（防止吃掉下一个标签）
+        // (\]+|$)             -> 结尾必须是 ] 或者 字符串结束(针对截断)
+        
+        string cleanPattern = @"\[+\s*(SYNC|TRUST|CODE|NAME)[^\[\]]*(\]+|$)";
+        
+        // 执行清洗
+        content = Regex.Replace(content, cleanPattern, "", RegexOptions.IgnoreCase);
 
         // --- 处理结局标签 ---
         string upperContent = content.ToUpper();
@@ -197,6 +234,7 @@ public class UIManager : MonoBehaviour
             // EndingManager 内部有个 yield return WaitForSeconds(3.0f) 
             // 刚好可以留出时间让打字机效果跑完，玩家读完。
             endingManager.TriggerEnding(endingTag);
+            ClosePopUp();
         }
     }
 
@@ -247,6 +285,15 @@ public class UIManager : MonoBehaviour
         if(inputManager != null)
         {
             inputManager.ShowInput();
+        }
+    }
+
+    private IEnumerator ClosePopUp()
+    {
+        yield return new WaitForSeconds(closePopupDelay);
+        if(inputManager != null)
+        {
+            inputManager.Close();
         }
     }
 
