@@ -1,3 +1,7 @@
+# Local API config — fill in your key here, never commit this file
+# Copy ApiConfig.example.txt → ApiConfig.txt to get started
+Assets/StreamingAssets/ApiConfig.txt
+
 # Unity generated folders (never push)
 [Ll]ibrary/
 [Tt]emp/

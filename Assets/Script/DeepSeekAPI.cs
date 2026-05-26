@@ -6,14 +6,16 @@ using UnityEngine.Networking;
 
 public class DeepSeekAPI : MonoBehaviour
 {
-    private string apiKey = "sk-f5dafb6122974678bca3de410c34b397";
+    // API key is loaded from StreamingAssets/ApiConfig.txt — copy ApiConfig.example.txt and fill in your key.
+    // Never commit real keys to version control.
+    private string apiKey;
     private string apiUrl = "https://api.deepseek.com/v1/chat/completions";
 
     [SerializeField]
     private string modelName = "deepseek-chat";
 
-    [Header("Dialogue Settings")] // 参数
-    [Range(0, 2)] public float temperature = 0.5f; // 越高越随机
+    [Header("Dialogue Settings")] // parameters
+    [Range(0, 2)] public float temperature = 0.5f; // higher = more random
     [Range(1, 1000)] public int maxTokens = 200;
     public int maxRounds = 20; // AI response rounds
 
@@ -30,12 +32,17 @@ public class DeepSeekAPI : MonoBehaviour
 
     public delegate void DialogueCallback(string content, bool isSuccess);
 
+    // Persistent conversation history (system prompt + alternating user/assistant messages)
     // ===== 新增：对话历史 =====
     private List<ApiMessage> conversationHistory = new List<ApiMessage>();
 
-    void Start()
+    void Awake()
     {
-        
+        // Load the API key from the local config file (gitignored — never committed)
+        apiKey = ConfigLoader.GetKey("DEEPSEEK_API_KEY");
+
+        if (string.IsNullOrEmpty(apiKey) || apiKey == "YOUR_API_KEY_HERE")
+            Debug.LogError("[DeepSeekAPI] API key is not set. Open StreamingAssets/ApiConfig.txt and replace YOUR_API_KEY_HERE with your real key.");
     }
 
     public void SendMessageToDeepSeek(string message, DialogueCallback callback)
@@ -45,6 +52,7 @@ public class DeepSeekAPI : MonoBehaviour
 
     IEnumerator PostRequest(string message, DialogueCallback callback)
     {
+        // Initialize system prompt once — injected as the first message only
         // ===== 新增：初始化 system（只加一次）=====
         if (conversationHistory.Count == 0)
         {
@@ -55,6 +63,7 @@ public class DeepSeekAPI : MonoBehaviour
             });
         }
 
+        // Append the current user message to history
         // ===== 新增：加入 user =====
         conversationHistory.Add(new ApiMessage
         {
@@ -62,6 +71,7 @@ public class DeepSeekAPI : MonoBehaviour
             content = message
         });
 
+        // Trim history window, keeping the system prompt intact
         // ===== 新增：裁剪历史（保留 system）=====
         TrimConversationHistory();
 
@@ -79,8 +89,8 @@ public class DeepSeekAPI : MonoBehaviour
         UnityWebRequest request = CreateWebRequest(jsonBody);
         yield return request.SendWebRequest();
 
-        if (request.result == UnityWebRequest.Result.ConnectionError || 
-            request.result == UnityWebRequest.Result.ProtocolError || 
+        if (request.result == UnityWebRequest.Result.ConnectionError ||
+            request.result == UnityWebRequest.Result.ProtocolError ||
             request.result == UnityWebRequest.Result.DataProcessingError)
         {
             if (request.responseCode == 429) // 速率限制 too many requests
@@ -89,27 +99,29 @@ public class DeepSeekAPI : MonoBehaviour
                 yield return new WaitForSeconds(5);
                 StartCoroutine(PostRequest(message, callback));
                 yield break;
-            } 
+            }
             else
             {
                 Debug.LogError("Error: " + request.error);
                 Debug.LogError("Response code: " + request.responseCode);
 
+                // On failure: roll back the user message so history stays consistent
                 // ===== 新增：失败回滚刚刚加入的 user =====
                 if (conversationHistory.Count > 0 && conversationHistory[conversationHistory.Count - 1].role == "user")
                     conversationHistory.RemoveAt(conversationHistory.Count - 1);
 
                 callback?.Invoke("API request failed: " + request.downloadHandler.text, false);
                 yield break;
-            }  
+            }
         }
-        
+
         ApiResponse response = ParseResponse(request.downloadHandler.text);
 
         if (response.choices != null && response.choices.Length > 0)
         {
             string reply = response.choices[0].message.content;
 
+            // Persist the assistant's reply in conversation history
             // ===== 新增：把 assistant 写入历史 =====
             conversationHistory.Add(new ApiMessage
             {
@@ -131,7 +143,7 @@ public class DeepSeekAPI : MonoBehaviour
     {
         UnityWebRequest request = new UnityWebRequest(apiUrl, "POST");
 
-        // http 只能传字节
+        // HTTP body must be a byte array. http 只能传字节
         byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonBody);
         request.uploadHandler = new UploadHandlerRaw(bodyRaw);
         request.downloadHandler = new DownloadHandlerBuffer();
@@ -143,7 +155,7 @@ public class DeepSeekAPI : MonoBehaviour
     }
 
     private ApiResponse ParseResponse(string jsonResponse)
-    {   
+    {
         Debug.Log("Response: " + jsonResponse);
         try
         {
@@ -164,15 +176,19 @@ public class DeepSeekAPI : MonoBehaviour
         }
     }
 
+    // Trim rule: system prompt always preserved at index 0; oldest messages removed first
     // ===== 新增：裁剪规则（永远保留 system）=====
     private void TrimConversationHistory()
     {
+        // Each dialogue round = 1 user msg + 1 assistant msg = 2 entries
         // 每轮 = user + assistant = 2 条
         int maxMessages = maxRounds * 2;
 
+        // System prompt lives at index 0 and is never removed
         // system 永远保留在 index 0
         int systemOffset = 1;
 
+        // When non-system message count exceeds limit, drop the oldest entry
         // 当 非system 的消息数 > maxMessages 时，删除最旧的一条
         while (conversationHistory.Count - systemOffset > maxMessages)
         {
