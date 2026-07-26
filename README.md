@@ -6,6 +6,8 @@ all dialogue is generated in real-time by the DeepSeek LLM. The player has a str
 12-turn limit to influence the outcome — every response they give shifts the AI's
 internal state and steers the story toward one of four distinct endings.
 
+![Gameplay demo](docs/media/demo.gif)
+
 ---
 
 ## Gameplay
